@@ -1,0 +1,63 @@
+@startuml
+
+interface PromotionStrategy {
+  +apply(products: List<Product>): List<Product>
+}
+
+class Product {
+  -code: String
+  -name: String
+  -price: double
+  -discountPrice: double
+  +getCode(): String
+  +getName(): String
+  +getPrice(): double
+  +getDiscountPrice(): double
+  +withDiscountPrice(newDiscountPrice: double): Product
+  +compareTo(other: Product): int
+  +equals(o: Object): boolean
+  +hashCode(): int
+}
+
+class Cart {
+  -products: List<Product>
+  +Cart(products: List<Product>)
+  +getProducts(): List<Product>
+  +getTotalPrice(): double
+  +getCheapest(): Product
+  +getMostExpensive(): Product
+  +getNCheapest(n: int): List<Product>
+  +getNMostExpensive(n: int): List<Product>
+  +defaultSort(): void
+  +customSort(comparator: Comparator<Product>): void
+  +applyPromotion(strategy: PromotionStrategy): void
+  +applyBestPromotions(strategies: List<PromotionStrategy>): void
+  -generatePermutations(original: List<PromotionStrategy>): List<List<PromotionStrategy>>
+}
+
+class ValueDiscountPromotion {
+  +apply(products: List<Product>): List<Product>
+}
+
+class BuyTwoGetOneFreePromotion {
+  +apply(products: List<Product>): List<Product>
+}
+
+class FreeMugPromotion {
+  +apply(products: List<Product>): List<Product>
+}
+
+class CouponDiscountPromotion {
+  -targetProductCode: String
+  +apply(products: List<Product>): List<Product>
+}
+
+ValueDiscountPromotion ..|> PromotionStrategy
+BuyTwoGetOneFreePromotion ..|> PromotionStrategy
+FreeMugPromotion ..|> PromotionStrategy
+CouponDiscountPromotion ..|> PromotionStrategy
+
+Cart "1" o-- "*" Product : contains
+Cart ..> PromotionStrategy : uses
+
+@enduml
